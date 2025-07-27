@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -8,7 +9,7 @@ interface JobApplication {
   id: string;
   title: string;
   company: string;
-  status: 'applied' | 'interview' | 'offer' | 'rejected';
+  status: 'applied' | 'in_review' | 'interview' | 'technical_test' | 'offer' | 'rejected' | 'withdrawn' | 'ghosted';
   appliedDate: string;
   url?: string;
   notes?: string;
@@ -25,22 +26,42 @@ const statusConfig = {
   applied: { 
     variant: 'pending' as const, 
     label: 'Applied',
-    color: 'bg-pending-light text-pending'
+    color: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+  },
+  in_review: { 
+    variant: 'pending' as const, 
+    label: 'In Review',
+    color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'
   },
   interview: { 
     variant: 'warning' as const, 
     label: 'Interview',
-    color: 'bg-warning-light text-warning'
+    color: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300'
+  },
+  technical_test: { 
+    variant: 'warning' as const, 
+    label: 'Technical Test',
+    color: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'
   },
   offer: { 
     variant: 'success' as const, 
     label: 'Offer',
-    color: 'bg-success-light text-success'
+    color: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
   },
   rejected: { 
     variant: 'destructive' as const, 
     label: 'Rejected',
-    color: 'bg-destructive/10 text-destructive'
+    color: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+  },
+  withdrawn: { 
+    variant: 'destructive' as const, 
+    label: 'Withdrawn',
+    color: 'bg-gray-100 text-gray-700 dark:bg-gray-900 dark:text-gray-300'
+  },
+  ghosted: { 
+    variant: 'destructive' as const, 
+    label: 'Ghosted',
+    color: 'bg-gray-100 text-gray-600 dark:bg-gray-900 dark:text-gray-400'
   }
 };
 
