@@ -164,9 +164,7 @@ userSchema.virtual('profile.fullName').get(function () {
     return this.profile.firstName || this.profile.lastName || this.username;
 });
 
-// Index for search optimization
-userSchema.index({ username: 1 });
-userSchema.index({ email: 1 });
+// Index for search optimization (username and email are already indexed via unique: true)
 userSchema.index({ 'profile.firstName': 1, 'profile.lastName': 1 });
 
 // Pre-save middleware to hash password

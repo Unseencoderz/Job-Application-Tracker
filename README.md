@@ -90,7 +90,7 @@
 
 - **Node.js** (version 18 or higher)
 - **npm** or **yarn** package manager
-- **MongoDB Atlas** account (free tier available)
+- **MongoDB Atlas** account (free tier available) or **MongoDB** installed locally
 - **Git** for cloning the repository
 
 ### Quick Start
@@ -141,21 +141,60 @@
    cd backend
    ```
 
-2. **Install dependencies**
+2. **Run the setup script (recommended)**
 
    ```bash
+   ./setup.sh
+   ```
+
+   This script will:
+   - Check Node.js and npm versions
+   - Install dependencies
+   - Create .env file from .env.example
+   - Test MongoDB connection
+   - Provide setup instructions
+
+3. **Manual setup (alternative)**
+
+   ```bash
+   # Install dependencies
    npm install
-   ```
-
-3. **Create environment file**
-
-   ```bash
+   
+   # Create environment file
    cp .env.example .env
+   
+   # Edit .env file with your MongoDB URI
+   nano .env
    ```
 
-4. **Start development server**
+4. **Set up MongoDB**
+
+   **Option A: MongoDB Atlas (Recommended)**
+   - Sign up at [MongoDB Atlas](https://www.mongodb.com/atlas)
+   - Create a free cluster (M0 tier)
+   - Create a database user
+   - Add IP address `0.0.0.0/0` for development
+   - Get connection string and update `MONGODB_URI` in `.env`
+
+   **Option B: Local MongoDB**
    ```bash
+   # Ubuntu/Debian
+   sudo apt-get install mongodb
+   sudo systemctl start mongodb
+   
+   # macOS
+   brew install mongodb-community
+   brew services start mongodb-community
+   ```
+
+5. **Start the backend server**
+
+   ```bash
+   # Development mode with auto-restart
    npm run dev
+   
+   # Production mode
+   npm start
    ```
 
 ### Frontend Setup
@@ -172,10 +211,35 @@
    npm install
    ```
 
-3. **Start development server**
+3. **Create environment file**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Start development server**
+
    ```bash
    npm run dev
    ```
+
+### Verify Installation
+
+1. **Test backend API**
+
+   ```bash
+   curl http://localhost:5000/api/health
+   ```
+
+2. **Test frontend**
+
+   Open http://localhost:5173 in your browser
+
+3. **Test full application**
+
+   - Register a new account
+   - Add your first job application
+   - Explore the dashboard features
 
 ## 🔧 Environment Variables
 
