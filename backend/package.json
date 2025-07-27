@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest"
+    "test": "jest",
+    "lint": "echo 'No linting configured for backend yet'",
+    "build": "echo 'No build step required for backend'"
   },
   "keywords": ["job-tracker", "api", "mongodb", "express"],
   "author": "",
@@ -25,7 +27,8 @@
     "helmet": "^7.1.0",
     "express-rate-limit": "^7.1.5",
     "cloudinary": "^1.41.3",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "express-async-handler": "^1.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",

@@ -94,32 +94,38 @@
    cd job-application-tracker
    ```
 
-2. **Install dependencies**
+2. **Run automated setup** (Recommended)
    ```bash
-   # Install backend dependencies
-   cd backend
    npm install
+   npm run setup
+   ```
+   This will guide you through setting up MongoDB Atlas and environment variables.
 
-   # Install frontend dependencies
-   cd ../frontend
-   npm install
+3. **Install all dependencies**
+   ```bash
+   npm run install:all
    ```
 
-3. **Set up environment variables** (see [Environment Variables](#-environment-variables))
-
-4. **Start the development servers**
+4. **Start both servers** (backend + frontend)
    ```bash
-   # Terminal 1: Start backend server
-   cd backend
    npm run dev
+   ```
+   
+   Or start them separately:
+   ```bash
+   # Terminal 1: Backend
+   npm run dev:backend
 
-   # Terminal 2: Start frontend server
-   cd frontend
-   npm run dev
+   # Terminal 2: Frontend (new terminal)
+   npm run dev:frontend
    ```
 
 5. **Open your browser**
    Navigate to `http://localhost:8080` to see the application.
+
+### Alternative: Manual Setup
+
+For detailed manual setup instructions, see [SETUP.md](SETUP.md).
 
 ## 📦 Installation
 
