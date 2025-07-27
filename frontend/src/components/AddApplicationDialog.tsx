@@ -16,6 +16,7 @@ interface JobApplication {
   appliedDate: string;
   url?: string;
   notes?: string;
+  location?: 'on_campus' | 'off_campus';
 }
 
 interface AddApplicationDialogProps {
@@ -30,7 +31,8 @@ export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
     status: 'applied' as const,
     appliedDate: new Date().toISOString().split('T')[0],
     url: '',
-    notes: ''
+    notes: '',
+    location: 'off_campus' as const
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +42,8 @@ export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
     onAdd({
       ...formData,
       url: formData.url || undefined,
-      notes: formData.notes || undefined
+      notes: formData.notes || undefined,
+      location: formData.location || undefined
     });
     
     // Reset form
@@ -50,7 +53,8 @@ export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
       status: 'applied',
       appliedDate: new Date().toISOString().split('T')[0],
       url: '',
-      notes: ''
+      notes: '',
+      location: 'off_campus'
     });
     setOpen(false);
   };
@@ -120,6 +124,19 @@ export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
                 required
               />
             </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="location">Location Type</Label>
+            <Select value={formData.location} onValueChange={(value) => setFormData(prev => ({ ...prev, location: value as 'on_campus' | 'off_campus' }))}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="on_campus">On Campus</SelectItem>
+                <SelectItem value="off_campus">Off Campus</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
           <div className="space-y-2">

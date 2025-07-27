@@ -2,7 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Building2, Calendar, ExternalLink, MoreVertical } from "lucide-react";
+import { Building2, Calendar, ExternalLink, MoreVertical, MapPin } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface JobApplication {
@@ -13,6 +13,7 @@ interface JobApplication {
   appliedDate: string;
   url?: string;
   notes?: string;
+  location?: 'on_campus' | 'off_campus';
 }
 
 interface JobCardProps {
@@ -86,6 +87,14 @@ export function JobCard({ application, onStatusChange, onEdit, onDelete }: JobCa
             <div className="flex items-center gap-2 text-muted-foreground">
               <Building2 className="h-4 w-4" />
               <span className="text-sm">{application.company}</span>
+              {application.location && (
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3" />
+                  <Badge variant="outline" className="text-xs">
+                    {application.location === 'on_campus' ? 'On Campus' : 'Off Campus'}
+                  </Badge>
+                </div>
+              )}
             </div>
           </div>
           

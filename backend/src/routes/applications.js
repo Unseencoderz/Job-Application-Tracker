@@ -181,7 +181,11 @@ router.post('/', [
     body('notes')
         .optional()
         .isLength({ max: 5000 })
-        .withMessage('Notes cannot exceed 5000 characters')
+        .withMessage('Notes cannot exceed 5000 characters'),
+    body('location')
+        .optional()
+        .isIn(['on_campus', 'off_campus'])
+        .withMessage('Location must be either on_campus or off_campus')
 ], async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -239,7 +243,11 @@ router.put('/:id', [
     body('notes')
         .optional()
         .isLength({ max: 5000 })
-        .withMessage('Notes cannot exceed 5000 characters')
+        .withMessage('Notes cannot exceed 5000 characters'),
+    body('location')
+        .optional()
+        .isIn(['on_campus', 'off_campus'])
+        .withMessage('Location must be either on_campus or off_campus')
 ], async (req, res) => {
     try {
         const errors = validationResult(req);

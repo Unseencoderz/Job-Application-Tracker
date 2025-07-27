@@ -103,6 +103,11 @@ const applicationSchema = new mongoose.Schema({
             }
         },
         location: String,
+        locationType: {
+            type: String,
+            enum: ['on_campus', 'off_campus'],
+            default: 'off_campus'
+        },
         workMode: {
             type: String,
             enum: ['remote', 'onsite', 'hybrid']

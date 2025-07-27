@@ -11,6 +11,7 @@
 ## 📋 Table of Contents
 
 - [Features](#-features)
+- [Recent Improvements](#-recent-improvements)
 - [Tech Stack](#-tech-stack)
 - [Getting Started](#-getting-started)
 - [Installation](#-installation)
@@ -50,9 +51,36 @@
 
 - **Real-time Updates**: Live data synchronization across devices
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
-- **Dark/Light Mode**: Theme preferences with system detection
+- **Dark/Light Mode**: Professional theme system with light, dark, and system preferences
 - **Search & Filter**: Advanced search across all application data
 - **Export Functionality**: Export data as CSV/PDF for external use
+- **Location Tracking**: Track on-campus vs off-campus applications
+- **Modern UI/UX**: Expert-designed interface with smooth animations and transitions
+
+## 🆕 Recent Improvements
+
+### ✨ Enhanced User Experience
+- **Professional Dark Theme**: Complete dark mode implementation with system preference detection
+- **Settings Dialog**: Comprehensive settings panel with theme switching, notifications, and privacy controls
+- **Edit Profile Functionality**: Full-featured profile editing with skills, job preferences, and goals management
+- **Modern Favicon**: New professional SVG and PNG favicon design
+
+### 🎯 Application Management
+- **Location Tracking**: Added "On Campus" vs "Off Campus" classification for applications
+- **Enhanced Job Cards**: Improved display with location badges and better visual hierarchy
+- **Fixed Backend Issues**: Resolved application creation problems and improved data validation
+
+### 🎨 UI/UX Enhancements
+- **Improved Navigation**: Better header design with integrated settings and profile access
+- **Enhanced Forms**: More intuitive application forms with better field organization
+- **Professional Styling**: Updated color schemes and gradients for both light and dark modes
+- **Responsive Design**: Optimized layouts for all device sizes
+
+### 🔧 Technical Improvements
+- **Theme Management**: Zustand-based theme store with persistent preferences
+- **Component Architecture**: Modular settings and profile editing components
+- **Backend Validation**: Enhanced API validation for new location field
+- **Error Handling**: Improved error messages and user feedback
 
 ## 🛠 Tech Stack
 

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { EditProfileDialog } from '@/components/EditProfileDialog';
 import { 
   User, 
   Mail, 
@@ -60,10 +61,7 @@ const Profile = () => {
             <Button variant="outline" onClick={() => navigate('/dashboard')}>
               Back to Dashboard
             </Button>
-            <Button>
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Profile
-            </Button>
+            <EditProfileDialog />
           </div>
         </div>
 
