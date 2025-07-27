@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { JobCard } from "@/components/JobCard";
 import { StatsCard } from "@/components/StatsCard";
 import { AddApplicationDialog } from "@/components/AddApplicationDialog";
+import { SettingsDialog } from "@/components/SettingsDialog";
+import { EditProfileDialog } from "@/components/EditProfileDialog";
 import { 
   Briefcase, 
   Calendar, 
@@ -36,6 +38,7 @@ interface JobApplication {
     url?: string;
   };
   notes?: string;
+  location?: 'on_campus' | 'off_campus';
   daysSinceApplication?: number;
 }
 
@@ -119,7 +122,8 @@ const Dashboard = () => {
       jobDetails: {
         url: newApp.jobDetails?.url
       },
-      notes: newApp.notes
+      notes: newApp.notes,
+      location: newApp.location
     };
     createApplicationMutation.mutate(applicationData);
   };
@@ -178,9 +182,11 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon">
-                <Settings className="h-4 w-4" />
-              </Button>
+              <SettingsDialog>
+                <Button variant="ghost" size="icon">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </SettingsDialog>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -196,10 +202,6 @@ const Dashboard = () => {
                   <DropdownMenuItem onClick={() => navigate('/profile')}>
                     <User className="h-4 w-4 mr-2" />
                     Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
@@ -313,7 +315,8 @@ const Dashboard = () => {
                       status: application.status,
                       appliedDate: application.applicationDate,
                       url: application.jobDetails?.url,
-                      notes: application.notes
+                      notes: application.notes,
+                      location: application.location
                     }}
                     onStatusChange={handleStatusChange}
                     onEdit={handleEdit}

@@ -1,0 +1,22 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="16" fill="url(#gradient)"/>
+  
+  <!-- Briefcase icon -->
+  <path d="M8 12h16v12H8V12zm2 2v8h12v-8H10zm4-4h4v2h-4V8z" fill="white"/>
+  
+  <!-- Document lines -->
+  <rect x="12" y="14" width="8" height="1" fill="white" opacity="0.8"/>
+  <rect x="12" y="16" width="6" height="1" fill="white" opacity="0.6"/>
+  <rect x="12" y="18" width="7" height="1" fill="white" opacity="0.8"/>
+  
+  <!-- Checkmark for success -->
+  <path d="M22 8l-2 2-1-1-1 1 2 2 3-3-1-1z" fill="white" opacity="0.9"/>
+</svg>
