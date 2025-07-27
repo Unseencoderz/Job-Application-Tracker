@@ -11,7 +11,7 @@ interface JobApplication {
   id: string;
   title: string;
   company: string;
-  status: 'applied' | 'interview' | 'offer' | 'rejected';
+  status: 'applied' | 'in_review' | 'interview' | 'technical_test' | 'offer' | 'rejected' | 'withdrawn' | 'ghosted';
   appliedDate: string;
   url?: string;
   notes?: string;
@@ -98,9 +98,13 @@ export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="applied">Applied</SelectItem>
+                  <SelectItem value="in_review">In Review</SelectItem>
                   <SelectItem value="interview">Interview</SelectItem>
+                  <SelectItem value="technical_test">Technical Test</SelectItem>
                   <SelectItem value="offer">Offer</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="withdrawn">Withdrawn</SelectItem>
+                  <SelectItem value="ghosted">Ghosted</SelectItem>
                 </SelectContent>
               </Select>
             </div>
