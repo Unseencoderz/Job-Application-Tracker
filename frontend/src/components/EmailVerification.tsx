@@ -38,7 +38,10 @@ export function EmailVerification({ email, onVerificationSuccess }: EmailVerific
     mutationFn: authAPI.verifyEmail,
     onSuccess: (data) => {
       toast.success('Email verified successfully!');
-      setUser(data.user);
+      // Set user and authentication state
+      if (data.user) {
+        setUser(data.user);
+      }
       onVerificationSuccess?.();
     },
     onError: (error: any) => {

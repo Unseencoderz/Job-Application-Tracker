@@ -2,6 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import User from '../models/User.js';
 import { protect } from '../middleware/auth.js';
+import upload, { uploadToCloudinary } from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -360,13 +361,49 @@ router.put('/avatar', [
         res.status(200).json({
             success: true,
             message: 'Avatar updated successfully',
-            avatar: user.profile.avatar
+            avatar: user.profile.avatar,
+            user: user.getPublicProfile()
         });
     } catch (error) {
         console.error('Update avatar error:', error);
         res.status(500).json({
             success: false,
             message: 'Server error'
+        });
+    }
+});
+
+// @desc    Upload avatar image
+// @route   POST /api/user/upload-avatar
+// @access  Private
+router.post('/upload-avatar', protect, upload.single('avatar'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No image file provided'
+            });
+        }
+
+        // Upload to Cloudinary
+        const result = await uploadToCloudinary(req.file.buffer, 'profile-avatars');
+        
+        // Update user avatar
+        const user = await User.findById(req.user.id);
+        user.profile.avatar = result.secure_url;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Avatar uploaded successfully',
+            avatar: result.secure_url,
+            user: user.getPublicProfile()
+        });
+    } catch (error) {
+        console.error('Upload avatar error:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Server error'
         });
     }
 });

@@ -68,6 +68,7 @@ interface AuthState {
   logout: () => Promise<void>;
   updateProfile: (profileData: any) => Promise<void>;
   loadUser: () => Promise<void>;
+  setUser: (user: User) => void;
   clearError: () => void;
   setLoading: (loading: boolean) => void;
 }
@@ -167,6 +168,15 @@ export const useAuthStore = create<AuthState>()(
           });
           throw error;
         }
+      },
+
+      setUser: (user: User) => {
+        set({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        });
       },
 
       loadUser: async () => {

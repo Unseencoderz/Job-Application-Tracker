@@ -163,6 +163,18 @@ export const userAPI = {
     return response.data;
   },
 
+  uploadAvatar: async (file: File) => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    
+    const response = await api.post('/user/upload-avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
   getPublicProfile: async (username: string) => {
     const response = await api.get(`/user/${username}`);
     return response.data;
