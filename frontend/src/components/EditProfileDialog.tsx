@@ -239,6 +239,7 @@ export function EditProfileDialog({ children }: EditProfileDialogProps) {
               </div>
               <div className="flex-1 space-y-2">
                 <Button 
+                  type="button"
                   variant="outline" 
                   size="sm" 
                   onClick={triggerFileInput}
