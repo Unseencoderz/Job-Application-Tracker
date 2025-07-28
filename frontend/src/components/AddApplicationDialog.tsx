@@ -10,11 +10,13 @@ import { Plus } from "lucide-react";
 
 interface JobApplication {
   id: string;
-  title: string;
+  jobTitle: string;
   company: string;
   status: 'applied' | 'in_review' | 'interview' | 'technical_test' | 'offer' | 'rejected' | 'withdrawn' | 'ghosted';
-  appliedDate: string;
-  url?: string;
+  applicationDate: string;
+  jobDetails?: {
+    url?: string;
+  };
   notes?: string;
   location?: 'on_campus' | 'off_campus';
 }
@@ -26,33 +28,37 @@ interface AddApplicationDialogProps {
 export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
+    jobTitle: '',
     company: '',
     status: 'applied' as const,
-    appliedDate: new Date().toISOString().split('T')[0],
-    url: '',
+    applicationDate: new Date().toISOString().split('T')[0],
+    jobDetails: {
+      url: ''
+    },
     notes: '',
     location: 'off_campus' as const
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.company) return;
+    if (!formData.jobTitle || !formData.company) return;
     
     onAdd({
       ...formData,
-      url: formData.url || undefined,
+      jobDetails: formData.jobDetails?.url ? formData.jobDetails : undefined,
       notes: formData.notes || undefined,
       location: formData.location || undefined
     });
     
     // Reset form
     setFormData({
-      title: '',
+      jobTitle: '',
       company: '',
       status: 'applied',
-      appliedDate: new Date().toISOString().split('T')[0],
-      url: '',
+      applicationDate: new Date().toISOString().split('T')[0],
+      jobDetails: {
+        url: ''
+      },
       notes: '',
       location: 'off_campus'
     });
@@ -73,11 +79,11 @@ export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Job Title</Label>
+            <Label htmlFor="jobTitle">Job Title</Label>
             <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+              id="jobTitle"
+              value={formData.jobTitle}
+              onChange={(e) => setFormData(prev => ({ ...prev, jobTitle: e.target.value }))}
               placeholder="Software Engineer"
               required
             />
@@ -115,12 +121,12 @@ export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="appliedDate">Applied Date</Label>
+              <Label htmlFor="applicationDate">Applied Date</Label>
               <Input
-                id="appliedDate"
+                id="applicationDate"
                 type="date"
-                value={formData.appliedDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, appliedDate: e.target.value }))}
+                value={formData.applicationDate}
+                onChange={(e) => setFormData(prev => ({ ...prev, applicationDate: e.target.value }))}
                 required
               />
             </div>
@@ -144,8 +150,14 @@ export function AddApplicationDialog({ onAdd }: AddApplicationDialogProps) {
             <Input
               id="url"
               type="url"
-              value={formData.url}
-              onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
+              value={formData.jobDetails?.url || ''}
+              onChange={(e) => setFormData(prev => ({ 
+                ...prev, 
+                jobDetails: { 
+                  ...prev.jobDetails, 
+                  url: e.target.value 
+                } 
+              }))}
               placeholder="https://company.com/careers/job-123"
             />
           </div>

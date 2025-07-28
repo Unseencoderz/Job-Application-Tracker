@@ -85,9 +85,19 @@ const Register = () => {
     try {
       clearError();
       const { confirmPassword, ...userData } = data;
-      await registerUser(userData);
-      toast.success('Registration successful! Welcome to Job Tracker!');
-      navigate('/dashboard');
+      
+      // Call the API directly instead of using the auth store since we need email verification
+      const response = await authAPI.register(userData);
+      
+      if (response.requiresVerification) {
+        toast.success('Registration successful! Please check your email for verification.');
+        navigate(`/verify-email?email=${encodeURIComponent(userData.email)}`);
+      } else {
+        // Fallback to old behavior if email verification is not required
+        await registerUser(userData);
+        toast.success('Registration successful! Welcome to Job Tracker!');
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Registration failed');
     }

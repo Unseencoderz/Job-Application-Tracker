@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { EditProfileDialog } from '@/components/EditProfileDialog';
+import { ChangePasswordDialog } from '@/components/ChangePasswordDialog';
 import { 
   User, 
   Mail, 
@@ -61,6 +62,7 @@ const Profile = () => {
             <Button variant="outline" onClick={() => navigate('/dashboard')}>
               Back to Dashboard
             </Button>
+            <ChangePasswordDialog />
             <EditProfileDialog />
           </div>
         </div>

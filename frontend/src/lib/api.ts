@@ -100,6 +100,35 @@ export const authAPI = {
     const response = await api.put('/auth/password', passwordData);
     return response.data;
   },
+
+  verifyEmail: async (verificationData: {
+    email: string;
+    otp: string;
+  }) => {
+    const response = await api.post('/auth/verify-email', verificationData);
+    if (response.data.token) {
+      setAuthToken(response.data.token);
+    }
+    return response.data;
+  },
+
+  resendOTP: async (email: string) => {
+    const response = await api.post('/auth/resend-otp', { email });
+    return response.data;
+  },
+
+  forgotPassword: async (login: string) => {
+    const response = await api.post('/auth/forgot-password', { login });
+    return response.data;
+  },
+
+  resetPassword: async (resetData: {
+    token: string;
+    newPassword: string;
+  }) => {
+    const response = await api.post('/auth/reset-password', resetData);
+    return response.data;
+  },
 };
 
 // User API
