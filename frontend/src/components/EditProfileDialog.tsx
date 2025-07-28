@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -21,7 +21,9 @@ import {
   X,
   Target,
   Briefcase,
-  Calendar
+  Calendar,
+  Upload,
+  Camera
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { userAPI } from "@/lib/api";
@@ -35,6 +37,7 @@ export function EditProfileDialog({ children }: EditProfileDialogProps) {
   const [open, setOpen] = useState(false);
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     firstName: user?.profile?.firstName || '',
@@ -71,13 +74,34 @@ export function EditProfileDialog({ children }: EditProfileDialogProps) {
   // Update profile mutation
   const updateProfileMutation = useMutation({
     mutationFn: userAPI.updateProfile,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      // Update the auth store with the new user data
+      if (data.user) {
+        const { setUser } = useAuthStore.getState();
+        setUser(data.user);
+      }
       toast.success('Profile updated successfully!');
       setOpen(false);
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Failed to update profile');
+    },
+  });
+
+  // Upload avatar mutation
+  const uploadAvatarMutation = useMutation({
+    mutationFn: userAPI.uploadAvatar,
+    onSuccess: (data) => {
+      // Update the auth store with the new user data
+      if (data.user) {
+        const { setUser } = useAuthStore.getState();
+        setUser(data.user);
+      }
+      toast.success('Avatar updated successfully!');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to upload avatar');
     },
   });
 
@@ -152,6 +176,29 @@ export function EditProfileDialog({ children }: EditProfileDialogProps) {
     return user?.username[0]?.toUpperCase() || 'U';
   };
 
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file');
+        return;
+      }
+      
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size must be less than 5MB');
+        return;
+      }
+      
+      uploadAvatarMutation.mutate(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -179,15 +226,38 @@ export function EditProfileDialog({ children }: EditProfileDialogProps) {
             </div>
             
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16">
-                <AvatarImage src={user?.profile?.avatar} />
-                <AvatarFallback className="text-lg">{getUserInitials()}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <Button variant="outline" size="sm">
-                  Change Avatar
-                </Button>
+              <div className="relative">
+                <Avatar className="h-16 w-16">
+                  <AvatarImage src={user?.profile?.avatar} />
+                  <AvatarFallback className="text-lg">{getUserInitials()}</AvatarFallback>
+                </Avatar>
+                {uploadAvatarMutation.isPending && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  </div>
+                )}
               </div>
+              <div className="flex-1 space-y-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={triggerFileInput}
+                  disabled={uploadAvatarMutation.isPending}
+                >
+                  <Camera className="h-4 w-4 mr-2" />
+                  {uploadAvatarMutation.isPending ? 'Uploading...' : 'Change Avatar'}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  JPG, PNG or GIF. Max 5MB.
+                </p>
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+              />
             </div>
             
             <div className="grid grid-cols-2 gap-4">
