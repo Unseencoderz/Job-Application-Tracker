@@ -1,13 +1,13 @@
 import nodemailer from 'nodemailer';
 
-// Create transporter (you can configure this for your email service)
-const createTransporter = () => {
+// Create Transport (you can configure this for your email service)
+const createTransport = () => {
   // For development, you can use a service like Mailtrap or Gmail
   // For production, use a proper email service like SendGrid, AWS SES, etc.
-  
+
   if (process.env.NODE_ENV === 'production') {
     // Production email service configuration
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       service: process.env.EMAIL_SERVICE || 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
@@ -17,7 +17,7 @@ const createTransporter = () => {
   } else {
     // Development configuration - using Gmail for simplicity
     // In real development, you might want to use Mailtrap or similar
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER || 'your-email@gmail.com',
@@ -29,8 +29,8 @@ const createTransporter = () => {
 
 export const sendVerificationOTP = async (email, otp, firstName) => {
   try {
-    const transporter = createTransporter();
-    
+    const Transport = createTransport();
+
     const mailOptions = {
       from: process.env.EMAIL_FROM || 'noreply@jobtracker.com',
       to: email,
@@ -52,8 +52,8 @@ export const sendVerificationOTP = async (email, otp, firstName) => {
         </div>
       `
     };
-    
-    await transporter.sendMail(mailOptions);
+
+    await Transport.sendMail(mailOptions);
     console.log('Verification OTP sent successfully to:', email);
   } catch (error) {
     console.error('Error sending verification OTP:', error);
@@ -63,9 +63,9 @@ export const sendVerificationOTP = async (email, otp, firstName) => {
 
 export const sendPasswordResetEmail = async (email, resetToken, firstName) => {
   try {
-    const transporter = createTransporter();
+    const Transport = createTransport();
     const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
-    
+
     const mailOptions = {
       from: process.env.EMAIL_FROM || 'noreply@jobtracker.com',
       to: email,
@@ -92,8 +92,8 @@ export const sendPasswordResetEmail = async (email, resetToken, firstName) => {
         </div>
       `
     };
-    
-    await transporter.sendMail(mailOptions);
+
+    await Transport.sendMail(mailOptions);
     console.log('Password reset email sent successfully to:', email);
   } catch (error) {
     console.error('Error sending password reset email:', error);
