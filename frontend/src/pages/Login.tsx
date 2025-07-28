@@ -38,7 +38,19 @@ const Login = () => {
       toast.success('Login successful!');
       navigate('/dashboard');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      const errorMessage = error.response?.data?.message || 'Login failed';
+      
+      // Check if the error is due to unverified email
+      if (error.response?.data?.requiresVerification) {
+        const email = error.response?.data?.email;
+        if (email) {
+          navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+          toast.info('Please verify your email address to continue.');
+          return;
+        }
+      }
+      
+      toast.error(errorMessage);
     }
   };
 
@@ -132,6 +144,12 @@ const Login = () => {
 
               {/* Links */}
               <div className="text-center space-y-2">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-primary hover:underline block"
+                >
+                  Forgot your password?
+                </Link>
                 <p className="text-sm text-muted-foreground">
                   Don't have an account?{' '}
                   <Link

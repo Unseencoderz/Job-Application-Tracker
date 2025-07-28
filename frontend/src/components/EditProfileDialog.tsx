@@ -83,7 +83,26 @@ export function EditProfileDialog({ children }: EditProfileDialogProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfileMutation.mutate(formData);
+    
+    // Structure the data to match backend expectations
+    const profileData = {
+      profile: {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        bio: formData.bio,
+        location: formData.location,
+        phoneNumber: formData.phoneNumber,
+        linkedinUrl: formData.linkedinUrl,
+        githubUrl: formData.githubUrl,
+        portfolioUrl: formData.portfolioUrl,
+        skills: formData.skills,
+        experience: formData.experience,
+        jobPreferences: formData.jobPreferences,
+        goals: formData.goals
+      }
+    };
+    
+    updateProfileMutation.mutate(profileData);
   };
 
   const addSkill = () => {

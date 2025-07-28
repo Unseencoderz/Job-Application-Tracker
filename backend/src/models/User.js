@@ -143,6 +143,8 @@ const userSchema = new mongoose.Schema({
         default: false
     },
     emailVerificationToken: String,
+    emailVerificationOTP: String,
+    emailVerificationExpires: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
     lastLogin: Date,
@@ -189,11 +191,34 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
+// Instance method to generate OTP for email verification
+userSchema.methods.generateEmailVerificationOTP = function () {
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    this.emailVerificationOTP = otp;
+    this.emailVerificationExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
+    
+    return otp;
+};
+
+// Instance method to generate password reset token
+userSchema.methods.generatePasswordResetToken = function () {
+    const resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    
+    this.passwordResetToken = resetToken;
+    this.passwordResetExpires = Date.now() + 30 * 60 * 1000; // 30 minutes
+    
+    return resetToken;
+};
+
 // Instance method to get public profile
 userSchema.methods.getPublicProfile = function () {
     const userObject = this.toObject();
     delete userObject.password;
     delete userObject.emailVerificationToken;
+    delete userObject.emailVerificationOTP;
+    delete userObject.emailVerificationExpires;
     delete userObject.passwordResetToken;
     delete userObject.passwordResetExpires;
     return userObject;
