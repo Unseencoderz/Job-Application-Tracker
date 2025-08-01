@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Applications Batch Sender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .progress {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #28a745;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #007bff; }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .stat {
+            padding: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Job Applications Batch Sender</h1>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startSending()">Start Sending Applications</button>
+            <button id="stopBtn" onclick="stopSending()" disabled>Stop</button>
+            <button id="clearBtn" onclick="clearLog()">Clear Log</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="totalCount">30</div>
+                <div>Total</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number success" id="successCount">0</div>
+                <div>Success</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number error" id="errorCount">0</div>
+                <div>Failed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number info" id="remainingCount">30</div>
+                <div>Remaining</div>
+            </div>
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="progressText">Ready to send 30 applications</div>
+        </div>
+
+        <div class="log" id="log">Click "Start Sending Applications" to begin...</div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/applications';
+        const AUTH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdkM2IyNGQxZWY1YjFlZDRjZGFiNyIsImlhdCI6MTc1Mzk0MTE5NCwiZXhwIjoxNzU0NTQ1OTk0fQ.jXN6rZ6BsPqrFj3r499Xp4krxDLwbMF9Bv2cpcRX-p8';
+        
+        const jobApplications = [
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Juspay",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Application rejected",
+                "jobDetails": { "url": "https://juspay.in/careers" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Coforge",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Application rejected",
+                "jobDetails": { "url": "https://coforge.com/careers" }
+            },
+            {
+                "jobTitle": "Software Developer",
+                "company": "Epam",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Application rejected",
+                "jobDetails": { "url": "https://epam.com/careers" }
+            },
+            {
+                "jobTitle": "Hackathon Participant",
+                "company": "Adobe India",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Hackathon application rejected",
+                "jobDetails": { "url": "https://adobe.com/careers" }
+            },
+            {
+                "jobTitle": "Frontend Developer",
+                "company": "JTG",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Frontend role application rejected",
+                "jobDetails": { "url": "https://jtg.com/careers" }
+            },
+            {
+                "jobTitle": "Software Development Engineer",
+                "company": "JTG",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "SDE role application rejected",
+                "jobDetails": { "url": "https://jtg.com/careers" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Juspay",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Applied via Unstop platform - rejected",
+                "jobDetails": { "url": "https://unstop.com/jobs" }
+            },
+            {
+                "jobTitle": "Software Development Engineer 1",
+                "company": "Amazon",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Assessment pending",
+                "jobDetails": { "url": "https://amazon.jobs" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "ProcDNA",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Application submitted - pending response",
+                "jobDetails": { "url": "https://procdna.com/careers" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "HCL",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Online assessment pending",
+                "jobDetails": { "url": "https://hcltech.com/careers" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "DeltaX",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Application rejected",
+                "jobDetails": { "url": "https://deltax.com/careers" }
+            },
+            {
+                "jobTitle": "Senior C++ Developer",
+                "company": "Epam",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Applied via LinkedIn - rejected",
+                "jobDetails": { "url": "https://linkedin.com/jobs" }
+            },
+            {
+                "jobTitle": "Technology Challenge Participant",
+                "company": "IDFC FIRST Bank",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Code-a-thon challenge - hiring contest",
+                "jobDetails": { "url": "https://idfcfirstbank.com/careers" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Google",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "First Google application",
+                "jobDetails": { "url": "https://careers.google.com" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Google",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Second Google application",
+                "jobDetails": { "url": "https://careers.google.com" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Microsoft",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "First Microsoft job role application",
+                "jobDetails": { "url": "https://careers.microsoft.com" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Microsoft",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Second Microsoft job role application",
+                "jobDetails": { "url": "https://careers.microsoft.com" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "GeeksforGeeks",
+                "status": "applied",
+                "applicationDate": "2025-08-21",
+                "location": "off_campus",
+                "notes": "Job-a-thon event application",
+                "jobDetails": { "url": "https://geeksforgeeks.org/jobs" }
+            },
+            {
+                "jobTitle": "ML Summer School Participant",
+                "company": "Amazon",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Machine Learning Summer School application",
+                "jobDetails": { "url": "https://amazon.com/ml-summer-school" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Wipro",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Applied via Wipro careers portal",
+                "jobDetails": { "url": "https://career55.sapsf.eu/careers?company=wiprolimitP2" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Microsoft",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Applied via provided URL",
+                "jobDetails": { "url": "https://account.amazon.jobs/en-US/applicant/jobs/3043277/apply" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "DevRhylme Foundation",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Applied via Unstop - rejected",
+                "jobDetails": { "url": "https://unstop.com/jobs" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Mercor",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Applied via Mercor platform",
+                "jobDetails": { "url": "https://work.mercor.com/jobs/apply/candidate_AAABmFTIsLLr8mqhIBZPbrNE/resume" }
+            },
+            {
+                "jobTitle": "Games Tester",
+                "company": "Rockstar Games",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Games Tester position in Bangalore",
+                "jobDetails": { "url": "https://www.rockstargames.com/careers/openings/position/5885793003" }
+            },
+            {
+                "jobTitle": "Software Engineer Intern - React JS",
+                "company": "PML",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Application submitted via 2k22.cse.2213591@gmail.com",
+                "jobDetails": { "url": "https://pml.com/careers" }
+            },
+            {
+                "jobTitle": "Software Development Intern",
+                "company": "Netmeds",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Applied with portfolio resume - Chennai location",
+                "jobDetails": { "url": "https://netmeds.com/careers" }
+            },
+            {
+                "jobTitle": "Sparkathon Participant",
+                "company": "Walmart",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Sparkathon application rejected",
+                "jobDetails": { "url": "https://careers.walmart.com" }
+            },
+            {
+                "jobTitle": "Career Drill 3.0 Participant",
+                "company": "Unstop",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "Career drill event application",
+                "jobDetails": { "url": "https://unstop.com/competitions" }
+            },
+            {
+                "jobTitle": "Software Engineer",
+                "company": "Cobalt",
+                "status": "applied",
+                "applicationDate": "2025-07-31",
+                "location": "on_campus",
+                "notes": "On campus recruitment - application submitted",
+                "jobDetails": { "url": "https://cobalt.com/careers" }
+            },
+            {
+                "jobTitle": "Open Source Contributor",
+                "company": "Rtcamp",
+                "status": "rejected",
+                "applicationDate": "2025-07-31",
+                "location": "off_campus",
+                "notes": "GitHub open source contribution application rejected",
+                "jobDetails": { "url": "https://github.com/rtcamp" }
+            }
+        ];
+
+        let isRunning = false;
+        let currentIndex = 0;
+        let successCount = 0;
+        let errorCount = 0;
+
+        function updateStats() {
+            document.getElementById('successCount').textContent = successCount;
+            document.getElementById('errorCount').textContent = errorCount;
+            document.getElementById('remainingCount').textContent = jobApplications.length - currentIndex;
+            
+            const progress = (currentIndex / jobApplications.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `Progress: ${currentIndex}/${jobApplications.length} (${Math.round(progress)}%)`;
+        }
+
+        function log(message, type = 'info') {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const colorClass = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            logElement.innerHTML += `<span class="${colorClass}">[${timestamp}] ${message}</span>\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = 'Log cleared...\n';
+        }
+
+        async function sendSingleApplication(job, index) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${AUTH_TOKEN}`
+                    },
+                    body: JSON.stringify(job)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    successCount++;
+                    log(`✅ SUCCESS: ${job.company} - ${job.jobTitle}`, 'success');
+                } else {
+                    errorCount++;
+                    log(`❌ FAILED: ${job.company} - ${job.jobTitle} | Error: ${data.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                errorCount++;
+                log(`❌ NETWORK ERROR: ${job.company} - ${job.jobTitle} | ${error.message}`, 'error');
+            }
+        }
+
+        async function startSending() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            
+            log('🚀 Starting batch job application submission...', 'info');
+            
+            for (let i = currentIndex; i < jobApplications.length && isRunning; i++) {
+                currentIndex = i + 1;
+                
+                log(`📤 Sending ${i + 1}/${jobApplications.length}: ${jobApplications[i].company} - ${jobApplications[i].jobTitle}`, 'info');
+                
+                await sendSingleApplication(jobApplications[i], i);
+                updateStats();
+                
+                // Add a small delay between requests to avoid overwhelming the server
+                if (isRunning && i < jobApplications.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+            }
+            
+            if (isRunning) {
+                log(`🎉 COMPLETED! Successfully sent: ${successCount}, Failed: ${errorCount}`, 'success');
+                isRunning = false;
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+            }
+        }
+
+        function stopSending() {
+            if (!isRunning) return;
+            
+            isRunning = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            log('⏹️ Process stopped by user', 'error');
+        }
+
+        // Initialize
+        updateStats();
+    </script>
+</body>
+</html>
