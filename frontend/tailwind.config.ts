@@ -93,7 +93,13 @@ export default {
 			boxShadow: {
 				'card': 'var(--shadow-card)',
 				'elevated': 'var(--shadow-elevated)',
-				'glow': 'var(--shadow-glow)'
+				'glow': 'var(--shadow-glow)',
+				'glass': 'var(--shadow-glass)',
+				'neu-raised': 'var(--shadow-neu-raised)',
+				'neu-inset': 'var(--shadow-neu-inset)',
+				'soft': '0 2px 10px -2px hsl(var(--primary) / 0.1)',
+				'medium': '0 4px 20px -4px hsl(var(--primary) / 0.15)',
+				'strong': '0 8px 30px -8px hsl(var(--primary) / 0.2)'
 			},
 			keyframes: {
 				'accordion-down': {
